@@ -1,0 +1,74 @@
+import sys
+from awsglue.transforms import *
+from awsglue.utils import getResolvedOptions
+from pyspark.context import SparkContext
+from pyspark.sql import SQLContext
+from awsglue.context import GlueContext
+from awsglue.job import Job
+from awsglue.dynamicframe import DynamicFrame
+from pyspark.sql.functions import col, when,lit
+import time
+
+args = getResolvedOptions(sys.argv, ['TempDir','JOB_NAME'])
+sc = SparkContext()
+glueContext = GlueContext(sc)
+sqlContext = SQLContext(sc)
+spark = glueContext.spark_session
+job = Job(glueContext)
+job.init(args['JOB_NAME'], args)
+
+def replaceby_null(x):
+    return when(col(x) != "\N", col(x)).otherwise(None)
+    
+df1 = sqlContext.read.format("com.databricks.spark.csv").option("header", "false").option("inferSchema", "true").option("delimiter", '').load("s3://dias.prod.us-east-1.dias-data/MEC_TRP_Sizmek_Custom_Outbound_20171106/Standard/*")
+df1 = df1.withColumn("_c29", replaceby_null("_c29"))
+currrentTime = time.strftime("%Y-%m-%d %H:%M")
+df = df1.withColumn("AcquiredTime", lit(currrentTime))
+
+datasource0 = DynamicFrame.fromDF(df, glueContext, "datasource0")
+datasource1 = datasource0.resolveChoice(specs = [('_c5','cast:int'),('_c13','cast:int'),('_c14','cast:int'),('_c25','cast:int'),('_c26','cast:int'),('_c29','cast:int'),
+('_c30','cast:int'),('_c32','cast:int'),('_c33','cast:string'),('_c34','cast:int'),('_c35','cast:int'),('_c36','cast:int'),('_c37','cast:int'),('_c38','cast:int'),
+('_c39','cast:int'),('_c41','cast:int'),('AcquiredTime','cast:timestamp')])
+
+## @type: ApplyMapping
+## @return: applymapping1
+## @inputs: [frame = datasource0]
+applymapping1 = ApplyMapping.apply(frame = datasource1, mappings = 
+[("_c0", "string", "EventID", "string"), ("_c1", "string", "UserID", "string"), ("_c2", "int", "EventTypeID", "int"), 
+("_c3", "timestamp", "EventDate", "timestamp"), ("_c4", "int", "EntityID", "int"), ("_c5", "int", "SEMID", "int"), 
+("_c6", "string", "SEUniqueID", "string"), ("_c7", "int", "PlacementID", "int"), ("_c8", "int", "SiteID", "int"), 
+("_c9", "int", "CampaignID", "int"), ("_c10", "int", "BrandID", "int"), ("_c11", "int", "AdvertiserID", "int"), 
+("_c12", "int", "AccountID", "int"), ("_c13", "int", "SearchAdID", "int"), ("_c14", "int", "AdGroupID", "int"),
+("_c15", "int", "CountryID", "int"), ("_c16", "int", "StateID", "int"), ("_c17", "int", "DMAID", "int"), 
+("_c18", "string", "ZipCode", "string"), ("_c19", "string", "AreaCode", "string"), ("_c20", "int", "BrowserCode", "int"), 
+("_c21", "int", "OSCode", "int"), ("_c22", "string", "Referrer", "string"),
+ ("_c23", "string", "MobileDevice", "string"),("_c24", "string", "MobileCarrier", "string"), 
+ ("_c25", "int", "AudienceID", "int"), ("_c26", "int", "ProductID", "int"), ("_c27", "int", "CityID", "int"), 
+ ("_c28", "string", "PCP", "string"),("_c29", "int", "EBCampaignID", "int"), ("_c30", "int", "SECampaignID", "int"), ("_c31", "string", "SEAccountID", "string"),
+("_c32", "int", "SEAdGroupID", "int"), ("_c33", "string", "versions", "string"), ("_c34", "int", "deliveryGroupID", "int"), 
+("_c35", "int", "Price", "int"), ("_c36", "int", "ExchangeId", "int"), ("_c37", "int", "BidID", "int"), 
+("_c38", "int", "StrategyID", "int"), ("_c39", "int", "ImpressionTypeID", "int"),
+("_c40", "string", "ImpressionExchangeToken", "string"),("_c41", "int", "BuyID", "int"),
+ ("_c42", "string", "InventorySource", "string"), ("_c43", "string", "DSP_ID", "string"),
+ ("_c44", "timestamp", "EventDateDefaultTImeZone", "timestamp"), ("_c45", "long", "UserIDNumeric", "long"),
+ ("_c46", "int", "md_file_date", "int"), ("_c47", "long", "md_user_id_numeric", "long"),("AcquiredTime", "timestamp", "AcquiredTime", "timestamp")], transformation_ctx = "applymapping1")
+ 
+## @type: ResolveChoice
+## @args: [choice = "make_cols", transformation_ctx = "resolvechoice2"]
+## @return: resolvechoice2
+## @inputs: [frame = applymapping1]
+resolvechoice2 = ResolveChoice.apply(frame = applymapping1, choice = "make_cols", transformation_ctx = "resolvechoice2")
+## @type: DropNullFields
+## @args: [transformation_ctx = "dropnullfields3"]
+## @return: dropnullfields3
+## @inputs: [frame = resolvechoice2]
+dropnullfields3 = DropNullFields.apply(frame = resolvechoice2, transformation_ctx = "dropnullfields3")
+dropnullfields3.toDF().show()
+## @type: DataSink
+## @args: [catalog_connection = "RedshiftDestination", connection_options = {"dbtable": "ads_csv", "database": "dev"}, redshift_tmp_dir = TempDir, transformation_ctx = "datasink4"]
+## @return: datasink4
+## @inputs: [frame = dropnullfields3]
+#print 'Schema before creating table'
+#dropnullfields3.printSchema()
+datasink4 = glueContext.write_dynamic_frame.from_jdbc_conf(frame = dropnullfields3, catalog_connection = "Redshift", connection_options = {"dbtable": "mec_us_trp.sizmek_standard_events", "database": "wmprodfeeds"}, redshift_tmp_dir = args["TempDir"], transformation_ctx = "datasink4")
+job.commit()

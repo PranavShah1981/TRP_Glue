@@ -1,0 +1,602 @@
+CREATE TABLE mec_us_trp.sizmek_site_visit_events
+(
+    UserID varchar(108) ,
+    OneTagID int,
+    SiteVisittime timestamp,
+    SiteVisitClassification varchar(50),
+    SiteVisitReferralDomain varchar(1500),
+    LandingPageDomain varchar(1500),
+    NSKeyword varchar(300),
+    MatchType varchar(600),
+    CustomParam varchar(12000),
+    AdvertiserID int,
+    SiteVisitTimeDefaultTImeZone timestamp ,
+    UserIDNumeric bigint,
+    AccountID int,
+    md_file_date int,
+    md_user_id_numeric bigint,
+    acquiredtime timestamp
+);
+
+
+CREATE TABLE mec_us_trp.sizmek_standard_events
+(
+    EventID varchar(108) NOT NULL,
+    UserID varchar(108) NOT NULL,
+    EventTypeID int NOT NULL,
+    EventDate timestamp NOT NULL,
+    EntityID int NOT NULL,
+    SEMID int,
+    SEUniqueID varchar(108),
+    PlacementID int,
+    SiteID int,
+    CampaignID int NOT NULL,
+    BrandID int NOT NULL,
+    AdvertiserID int NOT NULL,
+    AccountID int NOT NULL,
+    SearchAdID int,
+    AdGroupID int,
+    CountryID int,
+    StateID int,
+    DMAID int,
+    ZipCode varchar(32),
+    AreaCode varchar(32),
+    BrowserCode int,
+    OSCode int,
+    Referrer varchar(12000),
+    MobileDevice varchar(100),
+    MobileCarrier varchar(100),
+    AudienceID int,
+    ProductID int,
+    CityID int,
+    PCP varchar(6144),
+    EBCampaignID int,
+    SECampaignID int,
+    SEAccountID varchar(1200),
+    SEAdGroupID int,
+    versions varchar(6144),
+    deliveryGroupID int,
+    Price int,
+    ExchangeId int,
+    BidID int,
+    StrategyID int,
+    ImpressionTypeID int,
+    ImpressionExchangeToken varchar(150),
+    BuyID int,
+    InventorySource varchar(100),
+    DSP_ID varchar(100),
+    EventDateDefaultTImeZone timestamp NOT NULL,
+    UserIDNumeric bigint NOT NULL,
+    md_file_date int NOT NULL,
+    md_user_id_numeric bigint NOT NULL,
+    acquiredtime timestamp);
+
+CREATE TABLE mec_us_trp.sizmek_conversion_events
+(
+    UserID varchar(108) NOT NULL,
+    ConversionID varchar(108) NOT NULL,
+    ConversionDate timestamp NOT NULL,
+    ConversionTagID int NOT NULL,
+    AdvertiserID int NOT NULL,
+    AccountID int NOT NULL,
+    Revenue float,
+    Currency int,
+    Quantity int,
+    OrderID varchar(50),
+    Referrer varchar(12000),
+    ProductID varchar(300),
+    ProductInfo varchar(600),
+    WinnerEntityID int,
+    WinnerSEMID int,
+    WinnerSEUniqueID varchar(108),
+    EventTypeID int,
+    WinnerEventDate timestamp,
+    PlacementID int,
+    SiteID int,
+    CampaignID int,
+    AdGroupID int,
+    BrandID int,
+    CountryID int,
+    StateID int,
+    DMAID int,
+    CityID int,
+    ZipCode varchar(32),
+    AreaCode varchar(32),
+    OSCode int,
+    BrowserCode int,
+    String1 varchar(600),
+    String2 varchar(600),
+    String3 varchar(600),
+    String4 varchar(600),
+    String5 varchar(600),
+    String6 varchar(600),
+    String7 varchar(600),
+    String8 varchar(600),
+    String9 varchar(600),
+    String10 varchar(600),
+    String11 varchar(600),
+    String12 varchar(600),
+    String13 varchar(600),
+    String14 varchar(600),
+    String15 varchar(600),
+    String16 varchar(600),
+    String17 varchar(600),
+    String18 varchar(600),
+    String19 varchar(600),
+    String20 varchar(600),
+    String21 varchar(600),
+    String22 varchar(600),
+    String23 varchar(600),
+    String24 varchar(600),
+    String25 varchar(600),
+    String26 varchar(600),
+    String27 varchar(600),
+    String28 varchar(600),
+    String29 varchar(600),
+    String30 varchar(600),
+    String31 varchar(600),
+    String32 varchar(600),
+    String33 varchar(600),
+    String34 varchar(600),
+    String35 varchar(600),
+    String36 varchar(600),
+    String37 varchar(600),
+    String38 varchar(600),
+    String39 varchar(600),
+    String40 varchar(600),
+    String41 varchar(600),
+    String42 varchar(600),
+    String43 varchar(600),
+    String44 varchar(600),
+    String45 varchar(600),
+    String46 varchar(600),
+    String47 varchar(600),
+    String48 varchar(600),
+    String49 varchar(600),
+    String50 varchar(12000),
+    EBCampaignID int,
+    SECampaignID int,
+    SEAccountID varchar(1200),
+    SEAdGroupID int,
+    DeviceTypeID int,
+    WinnerVersionID int,
+    WinnerTargetAudienceID int,
+    WinnerDeliveryGroupID int,
+    IsConversion boolean,
+    MobileDevice varchar(100),
+    WinnerPCP varchar(12000),
+    WinnerEventID varchar(108),
+    ConversionDateDefaultTImeZone timestamp NOT NULL,
+    WinnerEventDateDefaultTImeZone timestamp,
+    UserIDNumeric bigint NOT NULL,
+    md_file_date int NOT NULL,
+    md_user_id_numeric bigint NOT NULL,
+    acquiredtime timestamp);
+
+CREATE TABLE mec_us_trp.sizmek_rich_events
+(
+    EventID varchar(108) NOT NULL,
+    UserID varchar(108) NOT NULL,
+    EventTypeID int NOT NULL,
+    InteractionID varchar(600) NOT NULL,
+    InteractionDuration int,
+    VideoAssetID int,
+    InteractionDate timestamp NOT NULL,
+    EntityID int NOT NULL,
+    PlacementID int NOT NULL,
+    SiteID int NOT NULL,
+    CampaignID int NOT NULL,
+    BrandID int NOT NULL,
+    AdvertiserID int NOT NULL,
+    AccountID int NOT NULL,
+    PCP varchar(6144),
+    MobileDevice varchar(100),
+    MobileCarrier varchar(100),
+    VersionID int,
+    AudienceID int,
+    deliveryGroupID int,
+    referrer varchar(6144),
+    ImpressionExchangeToken varchar(50),
+    InteractionDateDefaultTImeZone timestamp NOT NULL,
+    UserIDNumeric bigint NOT NULL,
+    md_file_date int NOT NULL,
+    md_user_id_numeric bigint NOT NULL,
+    acquiredtime timestamp);
+
+CREATE TABLE mec_us_trp.sizmek_accounts
+(
+    AccountID int NOT NULL,
+    AccountName varchar(300) NOT NULL,
+    DefaultTimeZone int NOT NULL
+);
+
+CREATE TABLE mec_us_trp.sizmek_ad_groups
+(
+    AdGroupID bigint NOT NULL,
+    SearchCampaignID bigint NOT NULL,
+    SEAdGroupID int bigint NULL,
+    AdGroupName varchar(1200) NOT NULL
+);
+
+CREATE TABLE mec_us_trp.sizmek_ads
+(
+    AdID bigint NOT NULL,
+    AdName varchar(900) NOT NULL,
+    PlacementID bigint NOT NULL,
+    Description varchar(3000),
+    CreationDate timestamp NOT NULL,
+    ClickThroughURL varchar(6000),
+    AdFormat varchar(300) NOT NULL,
+    Status varchar(150) NOT NULL,
+    Classification1 varchar(300),
+    Classification2 varchar(300),
+    Classification3 varchar(300),
+    Classification4 varchar(300),
+    Classification5 varchar(300),
+    SmartVersionAd bigint NOT NULL,
+    SmartVersionGroup varchar(1200),
+    AdSizeInKB int,
+    CreationDate_localTZ timestamp
+);
+
+CREATE TABLE mec_us_trp.sizmek_advertisers
+(
+    AdvertiserID bigint NOT NULL,
+    AdvertiserName varchar(300) NOT NULL,
+    AccountID bigint NOT NULL,
+    CAModelID bigint NOT NULL,
+    ImpressionCookieWindow bigint NOT NULL,
+    ClickCookieWindow bigint NOT NULL,
+    md_acquire_id bigint NOT NULL
+);
+
+CREATE TABLE mec_us_trp.sizmek_brands
+(
+    BrandID bigint NOT NULL,
+    BrandName varchar(600) NOT NULL,
+    AdvertiserID bigint NOT NULL
+);
+
+CREATE TABLE mec_us_trp.sizmek_browser_type
+(
+    BrowserID bigint NOT NULL,
+    BrowserName varchar(384) NOT NULL,
+    BrowserVersion varchar(192)
+);
+
+CREATE TABLE mec_us_trp.sizmek_city
+(
+    CityID bigint NOT NULL,
+    CityName varchar(150) NOT NULL
+);
+
+CREATE TABLE mec_us_trp.sizmek_conversions_tags
+(
+    ConversionTagID bigint NOT NULL,
+    ConversionName varchar(300) NOT NULL,
+    AdvertiserID bigint NOT NULL,
+    Type varchar(150) NOT NULL,
+    PageURL varchar(6000),
+    CreationDate timestamp,
+    Group1 varchar(600),
+    Group2 varchar(600),
+    Group3 varchar(600),
+    Group4 varchar(600),
+    Group5 varchar(600),
+    String1 varchar(300),
+    String2 varchar(300),
+    String3 varchar(300),
+    String4 varchar(300),
+    String5 varchar(300),
+    String6 varchar(300),
+    String7 varchar(300),
+    String8 varchar(300),
+    String9 varchar(300),
+    String10 varchar(300),
+    String11 varchar(300),
+    String12 varchar(300),
+    String13 varchar(300),
+    String14 varchar(300),
+    String15 varchar(300),
+    String16 varchar(300),
+    String17 varchar(300),
+    String18 varchar(300),
+    String19 varchar(300),
+    String20 varchar(300),
+    String21 varchar(300),
+    String22 varchar(300),
+    String23 varchar(300),
+    String24 varchar(300),
+    String25 varchar(300),
+    String26 varchar(300),
+    String27 varchar(300),
+    String28 varchar(300),
+    String29 varchar(300),
+    String30 varchar(300),
+    String31 varchar(300),
+    String32 varchar(300),
+    String33 varchar(300),
+    String34 varchar(300),
+    String35 varchar(300),
+    String36 varchar(300),
+    String37 varchar(300),
+    String38 varchar(300),
+    String39 varchar(300),
+    String40 varchar(300),
+    String41 varchar(300),
+    String42 varchar(300),
+    String43 varchar(300),
+    String44 varchar(300),
+    String45 varchar(300),
+    String46 varchar(300),
+    String47 varchar(300),
+    String48 varchar(300),
+    String49 varchar(300),
+    CreationDate_localTZ timestamp
+);
+
+CREATE TABLE mec_us_trp.sizmek_country
+(
+    CountryID bigint NOT NULL,
+    CountryName varchar(150) NOT NULL
+);
+
+CREATE TABLE mec_us_trp.sizmek_currency
+(
+    CurrencyID bigint NOT NULL,
+    Name varchar(300) NOT NULL,
+    Symbol varchar(150) NOT NULL,
+    RateInUSD float NOT NULL,
+    HashName varchar(150),
+    CurrencyLetters varchar(150) NOT NULL
+);
+
+CREATE TABLE mec_us_trp.sizmek_device_type
+(
+    DeviceTypeID bigint NOT NULL,
+    DeviceTypename varchar(150) NOT NULL
+);
+
+CREATE TABLE mec_us_trp.sizmek_display_campaigns
+(
+    CampaignID bigint NOT NULL,
+    CampaignName varchar(900) NOT NULL,
+    BrandID bigint NOT NULL,
+    CreationDate timestamp,
+    StartDate timestamp,
+    EndDate timestamp,
+    SegmentationType varchar(150),
+    DefaultTargetAudience varchar(150),
+    MasterCampaignID int,
+    CreationDate_localTZ timestamp,
+    StartDate_localTZ timestamp,
+    EndDate_localTZ timestamp
+);
+
+CREATE TABLE mec_us_trp.sizmek_dma
+(
+    DMACode bigint NOT NULL,
+    DMAName varchar(150) NOT NULL
+);
+
+CREATE TABLE mec_us_trp.sizmek_event_type_rich
+(
+    EventTypeID bigint NOT NULL,
+    EventTypeName varchar(192) NOT NULL
+);
+
+CREATE TABLE mec_us_trp.sizmek_event_type_standard
+(
+    EventTypeID bigint NOT NULL,
+    EventTypeName varchar(192) NOT NULL
+);
+
+CREATE TABLE mec_us_trp.sizmek_interactions
+(
+    InteractionID varchar(600) NOT NULL,
+    InteractionName varchar(600) NOT NULL,
+    InteractionType varchar(30) NOT NULL,
+    CustomInteraction varchar(30) NOT NULL
+);
+
+CREATE TABLE mec_us_trp.sizmek_keywords
+(
+    SEKeywordID bigint NOT NULL,
+    KeywordName varchar(1200) NOT NULL,
+    AdGroupID bigint NOT NULL,
+    KeywordID bigint NOT NULL,
+    "Position" float NOT NULL,
+    MatchType varchar(600),
+    DestinationURL varchar(6000)
+);
+
+CREATE TABLE mec_us_trp.sizmek_master_campaigns
+(
+    MasterCampaignID bigint NOT NULL,
+    MasterCampaignName varchar(900) NOT NULL,
+    BrandID bigint NOT NULL,
+    CreationDate timestamp,
+    SegmentationType varchar(150),
+    CreationDate_localTZ timestamp
+);
+
+CREATE TABLE mec_us_trp.sizmek_media_buy_channel
+(
+    ChannelID bigint NOT NULL,
+    ChannelName varchar(300) NOT NULL
+);
+
+CREATE TABLE mec_us_trp.sizmek_operating_system
+(
+    OSID bigint NOT NULL,
+    OSName varchar(384) NOT NULL,
+    OSVersion varchar(192),
+    DeviceTypeID bigint NOT NULL
+);
+
+CREATE TABLE mec_us_trp.sizmek_panel_names
+(
+    PanelName varchar(600) NOT NULL,
+    PanelID bigint NOT NULL,
+    AdID bigint NOT NULL,
+    AutoExpand varchar(30) NOT NULL
+);
+
+CREATE TABLE mec_us_trp.sizmek_period_names
+(
+    PeriodID bigint NOT NULL,
+    PeriodName varchar(600) NOT NULL,
+    PackageID bigint NOT NULL,
+    PeriodStartDate timestamp NOT NULL,
+    PeriodEndDate timestamp NOT NULL,
+    PeriodStartDate_localTZ timestamp,
+    PeriodEndDate_localTZ timestamp
+);
+
+CREATE TABLE mec_us_trp.sizmek_placements
+(
+    PlacementID bigint NOT NULL,
+    PlacementName varchar(1500),
+    PackageID bigint NOT NULL,
+    PackageName varchar(300) NOT NULL,
+    IsRealPackage boolean NOT NULL,
+    CampaignID bigint NOT NULL,
+    CreationDate timestamp,
+    StartDate timestamp NOT NULL,
+    ActualStartDate timestamp,
+    EndDate timestamp NOT NULL,
+    UnitSize varchar(600) NOT NULL,
+    SiteID bigint NOT NULL,
+    BookedImpressions bigint,
+    CostModel varchar(150),
+    ROIMetric varchar(150),
+    ROIMetricConversionID bigint,
+    ROIMetricCustomInteractionID varchar(600),
+    CostPerUnit float,
+    OrderedUnits bigint,
+    ValuePerAction float,
+    TargetAudience varchar(150),
+    Classification1 varchar(600),
+    Classification2 varchar(600),
+    Classification3 varchar(600),
+    Classification4 varchar(600),
+    Classification5 varchar(600),
+    CostCappingCalculation boolean,
+    SectionName varchar(750),
+    IgnoreOverDelivery boolean,
+    SpecialTraffickingInstructions varchar(3000),
+    MediaBuyChannel varchar(150),
+    CreationDate_localTZ timestamp,
+    StartDate_localTZ timestamp,
+    ActualStartDate_localTZ timestamp,
+    EndDate_localTZ timestamp
+);
+
+CREATE TABLE mec_us_trp.sizmek_product
+(
+    ProductID bigint NOT NULL,
+    ProductName varchar(600) NOT NULL
+);
+
+CREATE TABLE mec_us_trp.sizmek_search
+(
+    SEMID bigint NOT NULL,
+    UniqueID varchar(600) NOT NULL,
+    PublisherID bigint,
+    PublisherTypeID bigint,
+    AccountID varchar(600),
+    AccountName varchar(600),
+    AccountStatus varchar(60),
+    CurrencyISOCode varchar(9),
+    CampaignID bigint,
+    CampaignName varchar(900),
+    CampaignStartDate timestamp,
+    CampaignEndDate timestamp,
+    CampaignStatus varchar(150),
+    AdGroupID bigint,
+    AdGroupName varchar(600),
+    AdGroupStatus varchar(60),
+    KeywordID bigint,
+    KeywordText varchar(600),
+    KeywordStatus varchar(60),
+    AdID bigint,
+    AdName varchar(3000),
+    AdStatus varchar(60),
+    AccountLastModified timestamp,
+    CampaignLastModified timestamp,
+    AdgroupLastModified timestamp,
+    KeywordLastModified timestamp,
+    AdLastModified timestamp,
+    ReportCreationTimestamp timestamp,
+    AdvertiserID bigint,
+    CampaignStartDate_localTZ timestamp,
+    CampaignEndDate_localTZ timestamp,
+    AccountLastModified_localTZ timestamp,
+    CampaignLastModified_localTZ timestamp,
+    AdgroupLastModified_localTZ timestamp,
+    KeywordLastModified_localTZ timestamp,
+    AdLastModified_localTZ timestamp,
+    ReportCreationTimestamp_localTZ timestamp
+);
+
+CREATE TABLE mec_us_trp.sizmek_search_accounts
+(
+    SEAccountID varchar(1200) NOT NULL,
+    SEAccountName varchar(1200) NOT NULL,
+    EBSearchAccountID bigint NOT NULL,
+    EBSearchAccountName varchar(300) NOT NULL,
+    AdvertiserID bigint NOT NULL,
+    SearchEngineName varchar(600) NOT NULL,
+    Status varchar(150)
+);
+
+CREATE TABLE mec_us_trp.sizmek_search_ads
+(
+    EyeblasterAdID bigint NOT NULL,
+    SEAdID bigint NOT NULL,
+    AdGroupID bigint NOT NULL,
+    DestinationURL varchar(6000),
+    AdTitle varchar(1500),
+    AdText varchar(1500),
+    AdDisplayURL varchar(1500)
+);
+
+CREATE TABLE mec_us_trp.sizmek_search_campaigns
+(
+    EBCampaignID bigint NOT NULL,
+    SECampaignID bigint NOT NULL,
+    SECampaignName varchar(900) NOT NULL,
+    SEAccountID varchar(1200),
+    StartDate timestamp,
+    EndDate timestamp,
+    Status varchar(150),
+    StartDate_localTZ timestamp,
+    EndDate_localTZ timestamp
+);
+
+CREATE TABLE mec_us_trp.sizmek_sites
+(
+    SiteID bigint NOT NULL,
+    SiteName varchar(300) NOT NULL
+);
+
+CREATE TABLE mec_us_trp.sizmek_state
+(
+    StateID bigint NOT NULL,
+    StateName varchar(150) NOT NULL
+);
+
+CREATE TABLE mec_us_trp.sizmek_target_audience
+(
+    TargetAudienceID bigint NOT NULL,
+    TargetAudienceName varchar(600) NOT NULL
+);
+
+CREATE TABLE mec_us_trp.sizmek_video_names
+(
+    VideoAssetName varchar(600) NOT NULL,
+    AssetID bigint NOT NULL,
+    VideoDuration int,
+    VideoBitRate int,
+    VideoFileType varchar(30)
+);

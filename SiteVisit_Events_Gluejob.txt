@@ -1,0 +1,54 @@
+import sys
+from awsglue.transforms import *
+from awsglue.utils import getResolvedOptions
+from pyspark.context import SparkContext
+from pyspark.sql import SQLContext
+from awsglue.context import GlueContext
+from awsglue.job import Job
+from awsglue.dynamicframe import DynamicFrame
+from pyspark.sql.functions import col, when,lit
+import time
+
+args = getResolvedOptions(sys.argv, ['TempDir','JOB_NAME'])
+sc = SparkContext()
+glueContext = GlueContext(sc)
+sqlContext = SQLContext(sc)
+spark = glueContext.spark_session
+job = Job(glueContext)
+job.init(args['JOB_NAME'], args)
+
+df1 = sqlContext.read.format("com.databricks.spark.csv").option("header", "false").option("inferSchema", "true").option("delimiter", '').load("s3://dias.prod.us-east-1.dias-data/MEC_TRP_Sizmek_Custom_Outbound_20171106/Sitevisit/*")
+currrentTime = time.strftime("%Y-%m-%d %H:%M")
+df = df1.withColumn("AcquiredTime", lit(currrentTime))
+datasource0 = DynamicFrame.fromDF(df, glueContext, "datasource0")
+datasource1 = datasource0.resolveChoice(specs = [('AcquiredTime','cast:timestamp')])
+## @type: ApplyMapping
+
+applymapping1 = ApplyMapping.apply(frame = datasource1, mappings = 
+[("_c0", "string", "UserID", "string"), ("_c1", "int", "OneTagID", "int"), ("_c2", "timestamp", "SiteVisittime", "timestamp"), 
+("_c3", "string", "SiteVisitClassification", "string"), ("_c4", "string", "SiteVisitReferralDomain", "string"),
+ ("_c5", "string", "LandingPageDomain", "string"), 
+("_c6", "string", "NSKeyword", "string"), ("_c7", "string", "MatchType", "string"), ("_c8", "string", "CustomParam", "string"), 
+("_c9", "int", "AdvertiserID", "int"), ("_c10", "timestamp", "SiteVisitTimeDefaultTImeZone", "timestamp"), 
+("_c11", "long", "UserIDNumeric", "long"), 
+("_c12", "int", "AccountID", "int"), ("_c13", "int", "md_file_date", "int"), ("_c14", "long", "md_user_id_numeric", "long"),("AcquiredTime", "timestamp", "AcquiredTime", "timestamp")], transformation_ctx = "applymapping1")
+
+## @type: ResolveChoice
+## @args: [choice = "make_cols", transformation_ctx = "resolvechoice2"]
+## @return: resolvechoice2
+## @inputs: [frame = applymapping1]
+resolvechoice2 = ResolveChoice.apply(frame = applymapping1, choice = "make_cols", transformation_ctx = "resolvechoice2")
+## @type: DropNullFields
+## @args: [transformation_ctx = "dropnullfields3"]
+## @return: dropnullfields3
+## @inputs: [frame = resolvechoice2]
+dropnullfields3 = DropNullFields.apply(frame = resolvechoice2, transformation_ctx = "dropnullfields3")
+dropnullfields3.toDF().show()
+## @type: DataSink
+## @args: [catalog_connection = "RedshiftDestination", connection_options = {"dbtable": "sizmek_site_visit_events", "database": "wmprodfeeds"}, redshift_tmp_dir = TempDir, transformation_ctx = "datasink4"]
+## @return: datasink4
+## @inputs: [frame = dropnullfields3]
+#print 'Schema before creating table'
+#dropnullfields3.printSchema()
+datasink4 = glueContext.write_dynamic_frame.from_jdbc_conf(frame = dropnullfields3, catalog_connection = "Redshift", connection_options = {"dbtable": "mec_us_trp.sizmek_site_visit_events", "database": "wmprodfeeds"}, redshift_tmp_dir = args["TempDir"], transformation_ctx = "datasink4")
+job.commit()

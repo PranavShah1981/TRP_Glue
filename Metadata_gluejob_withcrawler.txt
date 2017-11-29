@@ -1,0 +1,739 @@
+import sys
+from awsglue.transforms import *
+from awsglue.utils import getResolvedOptions
+from pyspark.context import SparkContext
+from awsglue.context import GlueContext
+from awsglue.job import Job
+from datetime import datetime
+from awsglue.dynamicframe import DynamicFrame
+from pyspark.sql.functions import *
+from pyspark.sql.functions import col, udf
+from pyspark.sql import functions as F
+from pyspark.sql.types import TimestampType
+
+## @params: [TempDir, JOB_NAME]
+args = getResolvedOptions(sys.argv, ['TempDir', 'JOB_NAME'])
+
+sc = SparkContext()
+glueContext = GlueContext(sc)
+spark = glueContext.spark_session
+job = Job(glueContext)
+job.init(args['JOB_NAME'], args)
+## @type: DataSource
+## @return: ds_advertisers
+## @inputs: []
+
+ds_accounts = glueContext.create_dynamic_frame.from_catalog(database="trp", table_name="accounts_csv",
+                                                            transformation_ctx="ds_accounts")
+ds_ad_groups = glueContext.create_dynamic_frame.from_catalog(database="trp", table_name="ad_groups_csv",
+                                                             transformation_ctx="ds_ad_groups")
+dyf = glueContext.create_dynamic_frame.from_catalog(database="trp", table_name="ads_csv", transformation_ctx="dyf")
+df1 = dyf.toDF().withColumn("col4", unix_timestamp("col4","MM/dd/yyyy hh:mm:ss a").cast("timestamp")).withColumn("col16",
+                                                                                  unix_timestamp("col6","MM/dd/yyyy hh:mm:ss a").cast("timestamp"))
+ds_ads = DynamicFrame.fromDF(df1, glueContext, "ds_ads")
+
+ds_advertisers = glueContext.create_dynamic_frame.from_catalog(database="trp", table_name="advertisers_csv",
+                                                               transformation_ctx="ds_advertisers")
+ds_brands = glueContext.create_dynamic_frame.from_catalog(database="trp", table_name="brands_csv",
+                                                          transformation_ctx="ds_brands")
+ds_browser_types = glueContext.create_dynamic_frame.from_catalog(database="trp", table_name="browser_type_csv",
+                                                                 transformation_ctx="ds_browser_types")
+ds_cities = glueContext.create_dynamic_frame.from_catalog(database="trp", table_name="city_csv",
+                                                          transformation_ctx="ds_cities")
+
+dyf = glueContext.create_dynamic_frame.from_catalog(database="trp", table_name="conversions_tags_csv",
+                                                    transformation_ctx="dyf")
+
+df1 = dyf.toDF().withColumn("col5",unix_timestamp("col5","MM/dd/yyyy hh:mm:ss a").cast("timestamp")).withColumn(
+    "col60", unix_timestamp("col60","MM/dd/yyyy hh:mm:ss a").cast("timestamp"))
+ds_conversions_tags = DynamicFrame.fromDF(df1, glueContext, "ds_conversions_tags")
+
+ds_countries = glueContext.create_dynamic_frame.from_catalog(database="trp", table_name="country_csv",
+                                                             transformation_ctx="ds_countries")
+ds_currency = glueContext.create_dynamic_frame.from_catalog(database="trp", table_name="currency_csv",
+                                                    transformation_ctx="ds_currency")
+ds_device_types = glueContext.create_dynamic_frame.from_catalog(database="trp", table_name="device_type_csv",
+                                                                transformation_ctx="ds_device_types")
+
+dyf = glueContext.create_dynamic_frame.from_catalog(database="trp", table_name="display_campaigns_csv",
+                                                    transformation_ctx="dyf")
+df1 = dyf.toDF().withColumn("col3", unix_timestamp("col3","MM/dd/yyyy hh:mm:ss a").cast("timestamp")).withColumn("col4", 
+    unix_timestamp("col4","MM/dd/yyyy hh:mm:ss a").cast("timestamp")).withColumn("col5", 
+    unix_timestamp("col5","MM/dd/yyyy hh:mm:ss a").cast("timestamp")).withColumn("col9", 
+    unix_timestamp("col9","MM/dd/yyyy hh:mm:ss a").cast("timestamp")).withColumn("col10", 
+    unix_timestamp("col10","MM/dd/yyyy hh:mm:ss a").cast("timestamp")).withColumn("col11", 
+    unix_timestamp("col11","MM/dd/yyyy hh:mm:ss a").cast("timestamp"))
+
+ds_display_campaigns = DynamicFrame.fromDF(df1, glueContext, "ds_display_campaigns")
+
+ds_dma = glueContext.create_dynamic_frame.from_catalog(database="trp", table_name="dma_csv",
+                                                       transformation_ctx="ds_dma")
+ds_event_type_rich = glueContext.create_dynamic_frame.from_catalog(database="trp", table_name="event_type_rich_csv",
+                                                                   transformation_ctx="ds_event_type_rich")
+ds_event_type_standard = glueContext.create_dynamic_frame.from_catalog(database="trp",
+                                                                       table_name="event_type_standard_csv",
+                                                                       transformation_ctx="ds_event_type_standard")
+ds_interactions = glueContext.create_dynamic_frame.from_catalog(database="trp", table_name="interactions_csv",
+                                                                transformation_ctx="ds_interactions")
+ds_keywords = glueContext.create_dynamic_frame.from_catalog(database="trp", table_name="keywords_csv",
+                                                            transformation_ctx="ds_keywords")
+ds_master_campaigns = glueContext.create_dynamic_frame.from_catalog(database="trp", table_name="master_campaigns_csv",
+                                                                    transformation_ctx="ds_master_campaigns")
+ds_media_buy_channel = glueContext.create_dynamic_frame.from_catalog(database="trp", table_name="media_buy_channel_csv",
+                                                                     transformation_ctx="ds_media_buy_channel")
+ds_operating_system = glueContext.create_dynamic_frame.from_catalog(database="trp", table_name="operating_system_csv",
+                                                                    transformation_ctx="ds_operating_system")
+ds_panel_names = glueContext.create_dynamic_frame.from_catalog(database="trp", table_name="panel_names_csv",
+                                                               transformation_ctx="ds_panel_names")
+ds_period_names = glueContext.create_dynamic_frame.from_catalog(database="trp", table_name="period_names_csv",
+                                                                transformation_ctx="ds_period_names")
+ds_search_accounts = glueContext.create_dynamic_frame.from_catalog(database="trp", table_name="search_accounts_csv",
+                                                                   transformation_ctx="ds_search_accounts")
+ds_search_ads = glueContext.create_dynamic_frame.from_catalog(database="trp", table_name="search_ads_csv",
+                                                              transformation_ctx="ds_search_ads")
+ds_search_campaigns = glueContext.create_dynamic_frame.from_catalog(database="trp", table_name="search_campaigns_csv",
+                                                    transformation_ctx="ds_search_campaigns")
+dyf = glueContext.create_dynamic_frame.from_catalog(database="trp", table_name="search_csv",
+                                                    transformation_ctx="dyf")
+
+df1 = dyf.toDF().withColumn("col10", unix_timestamp("col10","MM/dd/yyyy hh:mm:ss a").cast("timestamp")).withColumn("col11", 
+    unix_timestamp("col11","MM/dd/yyyy hh:mm:ss a").cast("timestamp")).withColumn("col22", 
+    unix_timestamp("col22","MM/dd/yyyy hh:mm:ss a").cast("timestamp")).withColumn("col23", 
+    unix_timestamp("col23","MM/dd/yyyy hh:mm:ss a").cast("timestamp")).withColumn("col24", 
+    unix_timestamp("col24","MM/dd/yyyy hh:mm:ss a").cast("timestamp")).withColumn("col25", 
+    unix_timestamp("col25","MM/dd/yyyy hh:mm:ss a").cast("timestamp")).withColumn("col26", 
+    unix_timestamp("col26","MM/dd/yyyy hh:mm:ss a").cast("timestamp")).withColumn("col27", 
+    unix_timestamp("col27","MM/dd/yyyy hh:mm:ss a").cast("timestamp")).withColumn("col29", 
+    unix_timestamp("col29","MM/dd/yyyy hh:mm:ss a").cast("timestamp")).withColumn("col30", 
+    unix_timestamp("col30","MM/dd/yyyy hh:mm:ss a").cast("timestamp")).withColumn("col31", 
+    unix_timestamp("col31","MM/dd/yyyy hh:mm:ss a").cast("timestamp")).withColumn("col32", 
+    unix_timestamp("col32","MM/dd/yyyy hh:mm:ss a").cast("timestamp")).withColumn("col33", 
+    unix_timestamp("col33","MM/dd/yyyy hh:mm:ss a").cast("timestamp")).withColumn("col34", 
+    unix_timestamp("col34","MM/dd/yyyy hh:mm:ss a").cast("timestamp")).withColumn("col35", 
+    unix_timestamp("col35","MM/dd/yyyy hh:mm:ss a").cast("timestamp")).withColumn("col36", 
+    unix_timestamp("col36","MM/dd/yyyy hh:mm:ss a").cast("timestamp"))
+
+ds_search = DynamicFrame.fromDF(df1, glueContext, "ds_search")
+
+ds_sites = glueContext.create_dynamic_frame.from_catalog(database="trp", table_name="sites_csv",
+                                                         transformation_ctx="ds_sites")
+ds_states = glueContext.create_dynamic_frame.from_catalog(database="trp", table_name="state_csv",
+                                                          transformation_ctx="ds_states")
+ds_target_audiences = glueContext.create_dynamic_frame.from_catalog(database="trp", table_name="target_audience_csv",
+                                                                    transformation_ctx="ds_target_audiences")
+ds_video_names = glueContext.create_dynamic_frame.from_catalog(database="trp", table_name="video_names_csv",
+                                                    transformation_ctx="ds_video_names")
+dyf = glueContext.create_dynamic_frame.from_catalog(database="trp", table_name="placements_csv",
+                                                    transformation_ctx="dyf")
+df1 = dyf.toDF().withColumn("col6", unix_timestamp("col6","MM/dd/yyyy hh:mm:ss a").cast("timestamp")).withColumn("col7", 
+    unix_timestamp("col7","MM/dd/yyyy hh:mm:ss a").cast("timestamp")).withColumn("col8", 
+    unix_timestamp("col8","MM/dd/yyyy hh:mm:ss a").cast("timestamp")).withColumn("col9", 
+    unix_timestamp("col9","MM/dd/yyyy hh:mm:ss a").cast("timestamp")).withColumn("col31", 
+    unix_timestamp("col31","MM/dd/yyyy hh:mm:ss a").cast("timestamp")).withColumn("col32", 
+    unix_timestamp("col32","MM/dd/yyyy hh:mm:ss a").cast("timestamp")).withColumn("col33", 
+    unix_timestamp("col33","MM/dd/yyyy hh:mm:ss a").cast("timestamp")).withColumn("col34", 
+    unix_timestamp("col34","MM/dd/yyyy hh:mm:ss a").cast("timestamp"))
+
+ds_placements = DynamicFrame.fromDF(df1, glueContext, "ds_placements")
+
+ds_products = glueContext.create_dynamic_frame.from_catalog(database="trp", table_name="product_csv",
+                                                            transformation_ctx="ds_products")
+
+## @type: ApplyMapping
+am_accounts = ApplyMapping.apply(frame=ds_accounts, mappings=[("col0", "int", "AccountID", "int"),
+                                                              ("col1", "string", "AccountName", "string"),
+                                                              ("col2", "int", "DefaultTimeZone", "int")],
+                                 transformation_ctx="am_advertisers")
+am_ad_groups = ApplyMapping.apply(frame=ds_ad_groups, mappings=[("col0", "long", "AdGroupID", "long"),
+                                                                ("col1", "long", "SearchCampaignID", "long"),
+                                                                ("col2", "long", "SEAdGroupID", "long"),
+                                                                ("col3", "string", "AdGroupName", "string")],
+                                  transformation_ctx="am_ad_groups")
+am_ads = ApplyMapping.apply(frame=ds_ads,
+                            mappings=[("col0", "long", "AdID", "long"), ("col1", "string", "AdName", "string"),
+                                      ("col2", "long", "PlacementID", "long"),
+                                      ("col3", "string", "Description", "string"),
+                                      ("col4", "timestamp", "CreationDate", "timestamp"),
+                                      ("col5", "string", "ClickThroughURL", "string"),
+                                      ("col6", "string", "AdFormat", "string"), ("col7", "string", "Status", "string"),
+                                      ("col8", "string", "Classification1", "string"),
+                                      ("col9", "string", "Classification2", "string"),
+                                      ("col10", "string", "Classification3", "string"),
+                                      ("col11", "string", "Classification4", "string"),
+                                      ("col12", "string", "Classification5", "string"),
+                                      ("col13", "long", "SmartVersionAd", "long"),
+                                      ("col14", "string", "SmartVersionGroup", "string"),
+                                      ("col15", "long", "AdSizeInKB", "long"),
+                                      ("col16", "timestamp", "CreationDate_localTZ", "timestamp")],
+                            transformation_ctx="am_ads")
+am_advertisers = ApplyMapping.apply(frame=ds_advertisers, mappings=[("col0", "long", "AdvertiserID", "long"),
+                                                                    ("col1", "string", "AdvertiserName", "string"),
+                                                                    ("col2", "long", "AccountID", "long"),
+                                                                    ("col3", "long", "CAModelID", "long"),
+                                                                    ("col4", "long", "ImpressionCookieWindow", "long"),
+                                                                    ("col5", "long", "ClickCookieWindow", "long")],
+                                    transformation_ctx="am_advertisers")
+
+am_brands = ApplyMapping.apply(frame=ds_brands, mappings=[("col0", "long", "BrandID", "long"),
+                                                          ("col1", "string", "BrandName", "string"),
+                                                          ("col2", "long", "AdvertiserID", "long")],
+                               transformation_ctx="am_brands")
+am_browser_types = ApplyMapping.apply(frame=ds_browser_types, mappings=[("col0", "long", "BrowserID", "long"),
+                                                                        ("col1", "string", "BrowserName", "string"),
+                                                                        ("col2", "string", "BrowserVersion", "string")],
+                                      transformation_ctx="am_browser_types")
+am_cities = ApplyMapping.apply(frame=ds_cities,
+                               mappings=[("col0", "long", "CityID", "long"), ("col1", "string", "CityName", "string")],
+                               transformation_ctx="am_cities")
+am_conversions_tags = ApplyMapping.apply(frame=ds_conversions_tags,
+                                         mappings=[("col0", "long", "ConversionTagID", "long"),
+                                                   ("col1", "string", "ConversionName", "string"),
+                                                   ("col2", "long", "AdvertiserID", "long"),
+                                                   ("col3", "string", "Type", "string"),
+                                                   ("col4", "string", "PageURL", "string"),
+                                                   ("col5", "timestamp", "CreationDate", "timestamp"),
+                                                   ("col6", "string", "Group1", "string"),
+                                                   ("col7", "string", "Group2", "string"),
+                                                   ("col8", "string", "Group3", "string"),
+                                                   ("col9", "string", "Group4", "string"),
+                                                   ("col10", "string", "Group5", "string"),
+                                                   ("col11", "string", "String1", "string"),
+                                                   ("col12", "string", "String2", "string"),
+                                                   ("col13", "string", "String3", "string"),
+                                                   ("col14", "string", "String4", "string"),
+                                                   ("col15", "string", "String5", "string"),
+                                                   ("col16", "string", "String6", "string"),
+                                                   ("col17", "string", "String7", "string"),
+                                                   ("col18", "string", "String8", "string"),
+                                                   ("col19", "string", "String9", "string"),
+                                                   ("col20", "string", "String10", "string"),
+                                                   ("col21", "string", "String11", "string"),
+                                                   ("col22", "string", "String12", "string"),
+                                                   ("col23", "string", "String13", "string"),
+                                                   ("col24", "string", "String14", "string"),
+                                                   ("col25", "string", "String15", "string"),
+                                                   ("col26", "string", "String16", "string"),
+                                                   ("col27", "string", "String17", "string"),
+                                                   ("col28", "string", "String18", "string"),
+                                                   ("col29", "string", "String19", "string"),
+                                                   ("col30", "string", "String20", "string"),
+                                                   ("col31", "string", "String21", "string"),
+                                                   ("col32", "string", "String22", "string"),
+                                                   ("col33", "string", "String23", "string"),
+                                                   ("col34", "string", "String24", "string"),
+                                                   ("col35", "string", "String25", "string"),
+                                                   ("col36", "string", "String26", "string"),
+                                                   ("col37", "string", "String27", "string"),
+                                                   ("col38", "string", "String28", "string"),
+                                                   ("col39", "string", "String29", "string"),
+                                                   ("col40", "string", "String30", "string"),
+                                                   ("col41", "string", "String31", "string"),
+                                                   ("col42", "string", "String32", "string"),
+                                                   ("col43", "string", "String33", "string"),
+                                                   ("col44", "string", "String34", "string"),
+                                                   ("col45", "string", "String35", "string"),
+                                                   ("col46", "string", "String36", "string"),
+                                                   ("col47", "string", "String37", "string"),
+                                                   ("col48", "string", "String38", "string"),
+                                                   ("col49", "string", "String39", "string"),
+                                                   ("col50", "string", "String40", "string"),
+                                                   ("col51", "string", "String41", "string"),
+                                                   ("col52", "string", "String42", "string"),
+                                                   ("col53", "string", "String43", "string"),
+                                                   ("col54", "string", "String44", "string"),
+                                                   ("col55", "string", "String45", "string"),
+                                                   ("col56", "string", "String46", "string"),
+                                                   ("col57", "string", "String47", "string"),
+                                                   ("col58", "string", "String48", "string"),
+                                                   ("col59", "string", "String49", "string"),
+                                                   ("col60", "timestamp", "CreationDate_localTZ", "timestamp")],
+                                         transformation_ctx="am_conversions_tags")
+am_countries = ApplyMapping.apply(frame=ds_countries, mappings=[("col0", "long", "CountryID", "long"),
+                                                                ("col1", "string", "CountryName", "string")],
+                                  transformation_ctx="am_countries")
+am_currency = ApplyMapping.apply(frame=ds_currency,
+                                 mappings=[("col0", "long", "CurrencyID", "long"), ("col1", "string", "Name", "string"),
+                                           ("col2", "string", "Symbol", "string"),
+                                           ("col3", "double", "RateInUSD", "double"),
+                                           ("col4", "string", "HashName", "string"),
+                                           ("col5", "string", "CurrencyLetters", "string")],
+                                 transformation_ctx="am_currency")
+am_device_types = ApplyMapping.apply(frame=ds_device_types, mappings=[("col0", "long", "DeviceTypeID", "long"),
+                                                                      ("col1", "string", "DeviceTypename", "string")],
+                                     transformation_ctx="am_device_types")
+am_display_campaigns = ApplyMapping.apply(frame=ds_display_campaigns, mappings=[("col0", "long", "CampaignID", "long"),
+                                                                                ("col1", "string", "CampaignName",
+                                                                                 "string"),
+                                                                                ("col2", "long", "BrandID", "long"), (
+                                                                                    "col3", "timestamp", "CreationDate",
+                                                                                    "timestamp"), (
+                                                                                    "col4", "timestamp", "StartDate",
+                                                                                    "timestamp"), (
+                                                                                    "col5", "timestamp", "EndDate",
+                                                                                    "timestamp"),
+                                                                                ("col6", "string", "SegmentationType",
+                                                                                 "string"), ("col7", "string",
+                                                                                             "DefaultTargetAudience",
+                                                                                             "string"), (
+                                                                                    "col8", "string",
+                                                                                    "MasterCampaignID",
+                                                                                    "string"),
+                                                                                ("col9", "timestamp",
+                                                                                 "CreationDate_localTZ", "timestamp"),
+                                                                                ("col10", "timestamp",
+                                                                                 "StartDate_localTZ", "timestamp"), (
+                                                                                    "col11", "timestamp",
+                                                                                    "EndDate_localTZ",
+                                                                                    "timestamp")],
+                                          transformation_ctx="am_display_campaigns")
+am_dma = ApplyMapping.apply(frame=ds_dma,
+                            mappings=[("col0", "long", "DMACode", "long"), ("col1", "string", "DMAName", "string")],
+                            transformation_ctx="am_dma")
+am_event_type_rich = ApplyMapping.apply(frame=ds_event_type_rich, mappings=[("col0", "long", "EventTypeID", "long"), (
+    "col1", "string", "EventTypeName", "string")], transformation_ctx="am_event_type_rich")
+am_event_type_standard = ApplyMapping.apply(frame=ds_event_type_standard,
+                                            mappings=[("col0", "long", "EventTypeID", "long"),
+                                                      ("col1", "string", "EventTypeName", "string")],
+                                            transformation_ctx="am_event_type_standard")
+am_interactions = ApplyMapping.apply(frame=ds_interactions, mappings=[("col0", "string", "InteractionID", "string"),
+                                                                      ("col1", "string", "InteractionName", "string"),
+                                                                      ("col2", "string", "InteractionType", "string"), (
+                                                                          "col3", "string", "CustomInteraction",
+                                                                          "string")],
+                                     transformation_ctx="am_interactions")
+am_keywords = ApplyMapping.apply(frame=ds_keywords, mappings=[("col0", "long", "SEKeywordID", "long"),
+                                                              ("col1", "string", "KeywordName", "string"),
+                                                              ("col2", "long", "AdGroupID", "long"),
+                                                              ("col3", "long", "KeywordID", "long"),
+                                                              ("col4", "double", "Position", "double"),
+                                                              ("col5", "string", "MatchType", "string")
+    , ("col6", "string", "DestinationURL", "string")], transformation_ctx="am_keywords")
+am_master_campaigns = ApplyMapping.apply(frame=ds_keywords, mappings=[("col0", "long", "MasterCampaignID", "long"), (
+    "col1", "string", "MasterCampaignName", "string"),
+                                                                      ("col2", "long", "BrandID", "long"), (
+                                                                          "col3", "timestamp", "CreationDate",
+                                                                          "timestamp"),
+                                                                      ("col4", "string", "SegmentationType", "string"),
+                                                                      ("col5", "timestamp", "CreationDate_localTZ",
+                                                                       "timestamp")],
+                                         transformation_ctx="am_master_campaigns")
+
+am_media_buy_channel = ApplyMapping.apply(frame=ds_media_buy_channel, mappings=[("col0", "long", "ChannelID", "long"), (
+    "col1", "string", "ChannelName", "string")], transformation_ctx="am_media_buy_channel")
+am_operating_system = ApplyMapping.apply(frame=ds_operating_system, mappings=[("col0", "long", "OSID", "long"),
+                                                                              ("col1", "string", "OSName", "string"),
+                                                                              ("col2", "string", "OSVersion", "string"),
+                                                                              ("col3", "long", "DeviceTypeID", "long")],
+                                         transformation_ctx="am_operating_system")
+am_panel_names = ApplyMapping.apply(frame=ds_panel_names, mappings=[("col0", "string", "PanelName", "string"),
+                                                                    ("col1", "long", "PanelID", "long"),
+                                                                    ("col2", "long", "AdID", "long"),
+                                                                    ("col3", "string", "AutoExpand", "string")],
+                                    transformation_ctx="am_panel_names")
+am_period_names = ApplyMapping.apply(frame=ds_period_names, mappings=[("col0", "long", "PeriodID", "long"),
+                                                                      ("col1", "string", "PeriodName", "string"),
+                                                                      ("col2", "long", "PackageID", "long"), (
+                                                                          "col3", "timestamp", "PeriodStartDate",
+                                                                          "timestamp"), (
+                                                                          "col4", "timestamp", "PeriodEndDate",
+                                                                          "timestamp"),
+                                                                      ("col5", "timestamp", "PeriodStartDate_localTZ",
+                                                                       "timestamp"), (
+                                                                          "col6", "timestamp", "PeriodEndDate_localTZ",
+                                                                          "timestamp")],
+                                     transformation_ctx="am_period_names")
+am_search_accounts = ApplyMapping.apply(frame=ds_search_accounts, mappings=[("col0", "string", "SEAccountID", "string"),
+                                                                            ("col1", "string", "SEAccountName",
+                                                                             "string"),
+                                                                            ("col2", "long", "EBSearchAccountID",
+                                                                             "long"),
+                                                                            ("col3", "string", "EBSearchAccountName",
+                                                                             "string"),
+                                                                            ("col4", "long", "AdvertiserID", "long"), (
+                                                                                "col5", "string", "SearchEngineName",
+                                                                                "string"),
+                                                                            ("col6", "string", "Status", "string")],
+                                        transformation_ctx="am_search_accounts")
+am_search_ads = ApplyMapping.apply(frame=ds_search_ads, mappings=[("col0", "long", "EyeblasterAdID", "long"),
+                                                                  ("col1", "long", "SEAdID", "long"),
+                                                                  ("col2", "long", "AdGroupID", "long")
+    , ("col3", "string", "DestinationURL", "string"), ("col4", "string", "AdTitle", "string"),
+                                                                  ("col5", "string", "AdText", "string")
+    , ("col6", "string", "AdDisplayURL", "string")], transformation_ctx="am_search_ads")
+am_search_campaigns = ApplyMapping.apply(frame=ds_search_campaigns, mappings=[("col0", "long", "EBCampaignID", "long"),
+                                                                              ("col1", "long", "SECampaignID", "long"),
+                                                                              ("col2", "string", "SECampaignName",
+                                                                               "string"), (
+                                                                                  "col3", "string", "SEAccountID",
+                                                                                  "string"),
+                                                                              ("col4", "timestamp", "StartDate",
+                                                                               "timestamp"), (
+                                                                                  "col5", "timestamp", "EndDate",
+                                                                                  "timestamp"),
+                                                                              ("col6", "string", "Status", "string"),
+                                                                              ("col7", "timestamp", "StartDate_localTZ",
+                                                                               "timestamp"), (
+                                                                                  "col8", "timestamp",
+                                                                                  "EndDate_localTZ",
+                                                                                  "timestamp")],
+                                         transformation_ctx="am_search_campaigns")
+
+am_search = ApplyMapping.apply(frame=ds_search,
+                               mappings=[("col0", "long", "SEMID", "long"), ("col1", "string", "UniqueID", "string"),
+                                         ("col2", "long", "PublisherID", "long"),
+                                         ("col3", "long", "PublisherTypeID", "long"),
+                                         ("col4", "string", "AccountID", "string"),
+                                         ("col5", "string", "AccountName", "string"),
+                                         ("col6", "string", "AccountStatus", "string"),
+                                         ("col7", "string", "CurrencyISOCode", "string"),
+                                         ("col8", "long", "CampaignID", "long"),
+                                         ("col9", "string", "CampaignName", "string"),
+                                         ("col10", "timestamp", "CampaignStartDate", "timestamp"),
+                                         ("col11", "timestamp", "CampaignEndDate", "timestamp"),
+                                         ("col12", "string", "CampaignStatus", "string"),
+                                         ("col13", "long", "AdGroupID", "long"),
+                                         ("col14", "string", "AdGroupName", "string"),
+                                         ("col15", "string", "AdGroupStatus", "string"),
+                                         ("col16", "long", "KeywordID", "long"),
+                                         ("col17", "string", "KeywordText", "string"),
+                                         ("col18", "string", "KeywordStatus", "string"),
+                                         ("col19", "long", "AdID", "long"), ("col20", "string", "AdName", "string"),
+                                         ("col21", "string", "AdStatus", "string"),
+                                         ("col22", "timestamp", "AccountLastModified", "timestamp"),
+                                         ("col23", "timestamp", "CampaignLastModified", "timestamp"),
+                                         ("col24", "timestamp", "AdgroupLastModified", "timestamp"),
+                                         ("col25", "timestamp", "KeywordLastModified", "timestamp"),
+                                         ("col26", "timestamp", "AdLastModified", "timestamp"),
+                                         ("col27", "timestamp", "ReportCreationTimestamp", "timestamp"),
+                                         ("col28", "long", "AdvertiserID", "long"),
+                                         ("col29", "timestamp", "CampaignStartDate_localTZ", "timestamp"),
+                                         ("col30", "timestamp", "CampaignEndDate_localTZ", "timestamp"),
+                                         ("timestamp", "string", "AccountLastModified_localTZ", "timestamp"),
+                                         ("col32", "timestamp", "CampaignLastModified_localTZ", "timestamp"),
+                                         ("col33", "timestamp", "AdgroupLastModified_localTZ", "timestamp"),
+                                         ("col34", "timestamp", "KeywordLastModified_localTZ", "timestamp"),
+                                         ("col35", "timestamp", "AdLastModified_localTZ", "timestamp"),
+                                         ("col36", "timestamp", "ReportCreationTimestamp_localTZ", "timestamp")],
+                               transformation_ctx="applymapping1")
+
+am_sites = ApplyMapping.apply(frame=ds_sites,
+                              mappings=[("col0", "long", "SiteID", "long"), ("col1", "string", "SiteName", "string")],
+                              transformation_ctx="am_sites")
+am_states = ApplyMapping.apply(frame=ds_states, mappings=[("col0", "long", "StateID", "long"),
+                                                          ("col1", "string", "StateName", "string")],
+                               transformation_ctx="am_states")
+
+am_target_audiences = ApplyMapping.apply(frame=ds_target_audiences,
+                                         mappings=[("col0", "long", "TargetAudienceID", "long"),
+                                                   ("col1", "string", "TargetAudienceName", "string")],
+                                         transformation_ctx="am_target_audiences")
+am_video_names = ApplyMapping.apply(frame=ds_video_names, mappings=[("col0", "string", "VideoAssetName", "string"),
+                                                                    ("col1", "long", "AssetID", "long"),
+                                                                    ("col2", "int", "VideoDuration", "int"),
+                                                                    ("col3", "int", "VideoBitRate", "int")
+    , ("col4", "string", "VideoFileType", "string")], transformation_ctx="am_video_names")
+
+am_placements = ApplyMapping.apply(frame=ds_placements, mappings=[("col0", "long", "placementid", "long"),
+                                                                  ("col1", "string", "placementname", "string"),
+                                                                  ("col2", "long", "packageid", "long"),
+                                                                  ("col3", "string", "packagename", "string"),
+                                                                  ("col4", "boolean", "isrealpackage", "boolean"),
+                                                                  ("col5", "long", "campaignid", "long"),
+                                                                  ("col6", "timestamp", "creationdate", "timestamp"),
+                                                                  ("col7", "timestamp", "startdate", "timestamp"),
+                                                                  ("col8", "timestamp", "actualstartdate", "timestamp"),
+                                                                  ("col9", "timestamp", "enddate", "timestamp"),
+                                                                  ("col10", "string", "unitsize", "string"),
+                                                                  ("col11", "long", "siteid", "long"),
+                                                                  ("col12", "long", "bookedimpressions", "long"),
+                                                                  ("col13", "string", "costmodel", "string"),
+                                                                  ("col14", "string", "roimetric", "string"),
+                                                                  ("col15", "long", "roimetricconversionid", "long"), (
+                                                                      "col16", "string", "roimetriccustominteractionid",
+                                                                      "string"),
+                                                                  ("col17", "double", "costperunit", "double"),
+                                                                  ("col18", "int", "orderedunits", "int"),
+                                                                  ("col19", "double", "valueperaction", "double"),
+                                                                  ("col20", "string", "targetaudience", "string"),
+                                                                  ("col21", "string", "classification1", "string"),
+                                                                  ("col22", "string", "classification2", "string"),
+                                                                  ("col23", "string", "classification3", "string"),
+                                                                  ("col24", "string", "classification4", "string"),
+                                                                  ("col25", "string", "classification5", "string"), (
+                                                                      "col26", "boolean", "costcappingcalculation",
+                                                                      "boolean"),
+                                                                  ("col27", "string", "sectionname", "string"),
+                                                                  ("col28", "boolean", "ignoreoverdelivery", "boolean"),
+                                                                  ("col29", "string", "specialtraffickinginstructions",
+                                                                   "string"),
+                                                                  ("col30", "long", "mediabuychannel", "long"),
+                                                                  ("col31", "timestamp", "creationdate_localtz",
+                                                                   "timestamp"),
+                                                                  ("col32", "timestamp", "startdate_localtz",
+                                                                   "timestamp"), (
+                                                                      "col33", "timestamp", "actualstartdate_localtz",
+                                                                      "timestamp"), (
+                                                                      "col34", "timestamp", "enddate_localtz",
+                                                                      "timestamp")], transformation_ctx="am_placements")
+am_products = ApplyMapping.apply(frame=ds_products, mappings=[("col0", "long", "productid", "long"),
+                                                              ("col1", "string", "productname", "string")],
+                                 transformation_ctx="am_products")
+
+rc_accounts = ResolveChoice.apply(frame=am_accounts, choice="make_cols", transformation_ctx="rc_accounts")
+rc_ad_groups = ResolveChoice.apply(frame=am_ad_groups, choice="make_cols", transformation_ctx="rc_ad_groups")
+rc_ads = ResolveChoice.apply(frame=am_ads, choice="make_cols", transformation_ctx="rc_ads")
+rc_advertisers = ResolveChoice.apply(frame=am_advertisers, choice="make_cols", transformation_ctx="rc_advertisers")
+rc_brands = ResolveChoice.apply(frame=am_brands, choice="make_cols", transformation_ctx="rc_brands")
+rc_browser_types = ResolveChoice.apply(frame=am_browser_types, choice="make_cols",
+                                       transformation_ctx="rc_browser_types")
+rc_cities = ResolveChoice.apply(frame=am_cities, choice="make_cols", transformation_ctx="rc_cities")
+rc_conversions_tags = ResolveChoice.apply(frame=am_conversions_tags, choice="make_cols",
+                                          transformation_ctx="rc_conversions_tags")
+rc_countries = ResolveChoice.apply(frame=am_countries, choice="make_cols", transformation_ctx="rc_countries")
+rc_currency = ResolveChoice.apply(frame=am_currency, choice="make_cols", transformation_ctx="rc_currency")
+rc_device_types = ResolveChoice.apply(frame=am_device_types, choice="make_cols", transformation_ctx="rc_device_types")
+rc_display_campaigns = ResolveChoice.apply(frame=am_display_campaigns, choice="make_cols",
+                                           transformation_ctx="rc_display_campaigns")
+rc_dma = ResolveChoice.apply(frame=am_dma, choice="make_cols", transformation_ctx="rc_dma")
+rc_event_type_rich = ResolveChoice.apply(frame=am_event_type_rich, choice="make_cols",
+                                         transformation_ctx="rc_event_type_rich")
+rc_event_type_standard = ResolveChoice.apply(frame=am_event_type_standard, choice="make_cols",
+                                             transformation_ctx="rc_event_type_standard")
+rc_interactions = ResolveChoice.apply(frame=am_interactions, choice="make_cols", transformation_ctx="rc_interactions")
+rc_keywords = ResolveChoice.apply(frame=am_keywords, choice="make_cols", transformation_ctx="rc_keywords")
+rc_master_campaigns = ResolveChoice.apply(frame=am_master_campaigns, choice="make_cols",
+                                          transformation_ctx="rc_master_campaigns")
+rc_media_buy_channel = ResolveChoice.apply(frame=am_media_buy_channel, choice="make_cols",
+                                           transformation_ctx="rc_media_buy_channel")
+rc_operating_system = ResolveChoice.apply(frame=am_operating_system, choice="make_cols",
+                                          transformation_ctx="rc_operating_system")
+rc_panel_names = ResolveChoice.apply(frame=am_panel_names, choice="make_cols", transformation_ctx="rc_panel_names")
+rc_period_names = ResolveChoice.apply(frame=am_period_names, choice="make_cols", transformation_ctx="rc_period_names")
+rc_search_accounts = ResolveChoice.apply(frame=am_search_accounts, choice="make_cols",
+                                         transformation_ctx="rc_search_accounts")
+rc_search_ads = ResolveChoice.apply(frame=am_search_ads, choice="make_cols", transformation_ctx="rc_search_ads")
+rc_search_campaigns = ResolveChoice.apply(frame=am_search_campaigns, choice="make_cols",
+                                          transformation_ctx="rc_search_campaigns")
+rc_search = ResolveChoice.apply(frame=am_search, choice="make_cols", transformation_ctx="rc_search")
+rc_sites = ResolveChoice.apply(frame=am_sites, choice="make_cols", transformation_ctx="rc_sites")
+rc_states = ResolveChoice.apply(frame=am_states, choice="make_cols", transformation_ctx="rc_states")
+rc_target_audiences = ResolveChoice.apply(frame=am_target_audiences, choice="make_cols",
+                                          transformation_ctx="rc_target_audiences")
+rc_video_names = ResolveChoice.apply(frame=am_video_names, choice="make_cols", transformation_ctx="rc_video_names")
+rc_placements = ResolveChoice.apply(frame=am_placements, choice="make_cols", transformation_ctx="rc_placements")
+rc_products = ResolveChoice.apply(frame=am_products, choice="make_cols", transformation_ctx="rc_products")
+
+accounts = DropNullFields.apply(frame=rc_accounts, transformation_ctx="accounts")
+ad_groups = DropNullFields.apply(frame=rc_ad_groups, transformation_ctx="ad_groups")
+ads = DropNullFields.apply(frame=rc_ads, transformation_ctx="ads")
+advertisers = DropNullFields.apply(frame=rc_advertisers, transformation_ctx="advertisers")
+brands = DropNullFields.apply(frame=rc_brands, transformation_ctx="brands")
+browser_types = DropNullFields.apply(frame=rc_browser_types, transformation_ctx="browser_types")
+cities = DropNullFields.apply(frame=rc_cities, transformation_ctx="cities")
+conversions_tags = DropNullFields.apply(frame=rc_conversions_tags, transformation_ctx="conversions_tags")
+countries = DropNullFields.apply(frame=rc_countries, transformation_ctx="countries")
+currency = DropNullFields.apply(frame=rc_currency, transformation_ctx="currency")
+device_types = DropNullFields.apply(frame=rc_device_types, transformation_ctx="device_types")
+display_campaigns = DropNullFields.apply(frame=rc_display_campaigns, transformation_ctx="display_campaigns")
+dma = DropNullFields.apply(frame=rc_dma, transformation_ctx="dma")
+event_type_rich = DropNullFields.apply(frame=rc_event_type_rich, transformation_ctx="event_type_rich")
+event_type_standard = DropNullFields.apply(frame=rc_event_type_standard, transformation_ctx="event_type_standard")
+interactions = DropNullFields.apply(frame=rc_interactions, transformation_ctx="interactions")
+keywords = DropNullFields.apply(frame=rc_keywords, transformation_ctx="keywords")
+master_campaigns = DropNullFields.apply(frame=rc_master_campaigns, transformation_ctx="master_campaigns")
+media_buy_channel = DropNullFields.apply(frame=rc_media_buy_channel, transformation_ctx="media_buy_channel")
+operating_system = DropNullFields.apply(frame=rc_operating_system, transformation_ctx="operating_system")
+panel_names = DropNullFields.apply(frame=rc_panel_names, transformation_ctx="panel_names")
+period_names = DropNullFields.apply(frame=rc_period_names, transformation_ctx="period_names")
+search_accounts = DropNullFields.apply(frame=rc_search_accounts, transformation_ctx="search_accounts")
+search_ads = DropNullFields.apply(frame=rc_search_ads, transformation_ctx="search_ads")
+search_campaigns = DropNullFields.apply(frame=rc_search_campaigns, transformation_ctx="search_campaigns")
+search = DropNullFields.apply(frame=rc_search, transformation_ctx="search")
+sites = DropNullFields.apply(frame=rc_sites, transformation_ctx="sites")
+states = DropNullFields.apply(frame=rc_states, transformation_ctx="states")
+target_audiences = DropNullFields.apply(frame=rc_target_audiences, transformation_ctx="target_audiences")
+video_names = DropNullFields.apply(frame=rc_video_names, transformation_ctx="video_names")
+placements = DropNullFields.apply(frame=rc_placements, transformation_ctx="placements")
+products = DropNullFields.apply(frame=rc_products, transformation_ctx="products")
+
+datasink1 = glueContext.write_dynamic_frame.from_jdbc_conf(frame=accounts, catalog_connection="Redshift",
+                                                           connection_options={"dbtable": "mec_us_trp.sizmek_accounts",
+                                                                               "database": "wmprodfeeds"},
+                                                           redshift_tmp_dir=args["TempDir"],
+                                                           transformation_ctx="datasink1")
+datasink2 = glueContext.write_dynamic_frame.from_jdbc_conf(frame=ad_groups, catalog_connection="Redshift",
+                                                           connection_options={"dbtable": "mec_us_trp.sizmek_ad_groups",
+                                                                               "database": "wmprodfeeds"},
+                                                           redshift_tmp_dir=args["TempDir"],
+                                                           transformation_ctx="datasink2")
+datasink3 = glueContext.write_dynamic_frame.from_jdbc_conf(frame=ads, catalog_connection="Redshift",
+                                                           connection_options={"dbtable": "mec_us_trp.sizmek_ads",
+                                                                               "database": "wmprodfeeds"},
+                                                           redshift_tmp_dir=args["TempDir"],
+                                                           transformation_ctx="datasink3")
+datasink4 = glueContext.write_dynamic_frame.from_jdbc_conf(frame=brands, catalog_connection="Redshift",
+                                                           connection_options={"dbtable": "mec_us_trp.sizmek_brands",
+                                                                               "database": "wmprodfeeds"},
+                                                           redshift_tmp_dir=args["TempDir"],
+                                                           transformation_ctx="datasink4")
+datasink5 = glueContext.write_dynamic_frame.from_jdbc_conf(frame=browser_types, catalog_connection="Redshift",
+                                                           connection_options={
+                                                               "dbtable": "mec_us_trp.sizmek_browser_type",
+                                                               "database": "wmprodfeeds"},
+                                                           redshift_tmp_dir=args["TempDir"],
+                                                           transformation_ctx="datasink5")
+datasink6 = glueContext.write_dynamic_frame.from_jdbc_conf(frame=cities, catalog_connection="Redshift",
+                                                           connection_options={"dbtable": "mec_us_trp.sizmek_city",
+                                                                               "database": "wmprodfeeds"},
+                                                           redshift_tmp_dir=args["TempDir"],
+                                                           transformation_ctx="datasink6")
+datasink7 = glueContext.write_dynamic_frame.from_jdbc_conf(frame=conversions_tags, catalog_connection="Redshift",
+                                                           connection_options={
+                                                               "dbtable": "mec_us_trp.sizmek_conversions_tags",
+                                                               "database": "wmprodfeeds"},
+                                                           redshift_tmp_dir=args["TempDir"],
+                                                           transformation_ctx="datasink7")
+datasink8 = glueContext.write_dynamic_frame.from_jdbc_conf(frame=countries, catalog_connection="Redshift",
+                                                           connection_options={"dbtable": "mec_us_trp.sizmek_country",
+                                                                               "database": "wmprodfeeds"},
+                                                           redshift_tmp_dir=args["TempDir"],
+                                                           transformation_ctx="datasink8")
+datasink9 = glueContext.write_dynamic_frame.from_jdbc_conf(frame=currency, catalog_connection="Redshift",
+                                                           connection_options={"dbtable": "mec_us_trp.sizmek_currency",
+                                                                               "database": "wmprodfeeds"},
+                                                           redshift_tmp_dir=args["TempDir"],
+                                                           transformation_ctx="datasink9")
+datasink10 = glueContext.write_dynamic_frame.from_jdbc_conf(frame=device_types, catalog_connection="Redshift",
+                                                            connection_options={
+                                                                "dbtable": "mec_us_trp.sizmek_device_type",
+                                                                "database": "wmprodfeeds"},
+                                                            redshift_tmp_dir=args["TempDir"],
+                                                            transformation_ctx="datasink10")
+datasink11 = glueContext.write_dynamic_frame.from_jdbc_conf(frame=display_campaigns, catalog_connection="Redshift",
+                                                            connection_options={
+                                                                "dbtable": "mec_us_trp.sizmek_display_campaigns",
+                                                                "database": "wmprodfeeds"},
+                                                            redshift_tmp_dir=args["TempDir"],
+                                                            transformation_ctx="datasink11")
+datasink12 = glueContext.write_dynamic_frame.from_jdbc_conf(frame=dma, catalog_connection="Redshift",
+                                                            connection_options={"dbtable": "mec_us_trp.sizmek_dma",
+                                                                                "database": "wmprodfeeds"},
+                                                            redshift_tmp_dir=args["TempDir"],
+                                                            transformation_ctx="datasink12")
+datasink13 = glueContext.write_dynamic_frame.from_jdbc_conf(frame=event_type_rich, catalog_connection="Redshift",
+                                                            connection_options={
+                                                                "dbtable": "mec_us_trp.sizmek_event_type_rich",
+                                                                "database": "wmprodfeeds"},
+                                                            redshift_tmp_dir=args["TempDir"],
+                                                            transformation_ctx="datasink13")
+datasink14 = glueContext.write_dynamic_frame.from_jdbc_conf(frame=event_type_standard, catalog_connection="Redshift",
+                                                            connection_options={
+                                                                "dbtable": "mec_us_trp.sizmek_event_type_standard",
+                                                                "database": "wmprodfeeds"},
+                                                            redshift_tmp_dir=args["TempDir"],
+                                                            transformation_ctx="datasink14")
+datasink15 = glueContext.write_dynamic_frame.from_jdbc_conf(frame=interactions, catalog_connection="Redshift",
+                                                            connection_options={
+                                                                "dbtable": "mec_us_trp.sizmek_interactions",
+                                                                "database": "wmprodfeeds"},
+                                                            redshift_tmp_dir=args["TempDir"],
+                                                            transformation_ctx="datasink15")
+datasink16 = glueContext.write_dynamic_frame.from_jdbc_conf(frame=keywords, catalog_connection="Redshift",
+                                                            connection_options={"dbtable": "mec_us_trp.sizmek_keywords",
+                                                                                "database": "wmprodfeeds"},
+                                                            redshift_tmp_dir=args["TempDir"],
+                                                            transformation_ctx="datasink16")
+datasink17 = glueContext.write_dynamic_frame.from_jdbc_conf(frame=media_buy_channel, catalog_connection="Redshift",
+                                                            connection_options={
+                                                                "dbtable": "mec_us_trp.sizmek_media_buy_channel",
+                                                                "database": "wmprodfeeds"},
+                                                            redshift_tmp_dir=args["TempDir"],
+                                                            transformation_ctx="datasink17")
+datasink18 = glueContext.write_dynamic_frame.from_jdbc_conf(frame=operating_system, catalog_connection="Redshift",
+                                                            connection_options={
+                                                                "dbtable": "mec_us_trp.sizmek_operating_system",
+                                                                "database": "wmprodfeeds"},
+                                                            redshift_tmp_dir=args["TempDir"],
+                                                            transformation_ctx="datasink18")
+datasink19 = glueContext.write_dynamic_frame.from_jdbc_conf(frame=panel_names, catalog_connection="Redshift",
+                                                            connection_options={
+                                                                "dbtable": "mec_us_trp.sizmek_panel_names",
+                                                                "database": "wmprodfeeds"},
+                                                            redshift_tmp_dir=args["TempDir"],
+                                                            transformation_ctx="datasink19")
+datasink20 = glueContext.write_dynamic_frame.from_jdbc_conf(frame=search_accounts, catalog_connection="Redshift",
+                                                            connection_options={
+                                                                "dbtable": "mec_us_trp.sizmek_search_accounts",
+                                                                "database": "wmprodfeeds"},
+                                                            redshift_tmp_dir=args["TempDir"],
+                                                            transformation_ctx="datasink20")
+datasink21 = glueContext.write_dynamic_frame.from_jdbc_conf(frame=search_ads, catalog_connection="Redshift",
+                                                            connection_options={
+                                                                "dbtable": "mec_us_trp.sizmek_search_ads",
+                                                                "database": "wmprodfeeds"},
+                                                            redshift_tmp_dir=args["TempDir"],
+                                                            transformation_ctx="datasink21")
+datasink22 = glueContext.write_dynamic_frame.from_jdbc_conf(frame=search_campaigns, catalog_connection="Redshift",
+                                                            connection_options={
+                                                                "dbtable": "mec_us_trp.sizmek_search_campaigns",
+                                                                "database": "wmprodfeeds"},
+                                                            redshift_tmp_dir=args["TempDir"],
+                                                            transformation_ctx="datasink22")
+datasink23 = glueContext.write_dynamic_frame.from_jdbc_conf(frame=search, catalog_connection="Redshift",
+                                                            connection_options={"dbtable": "mec_us_trp.sizmek_search",
+                                                                                "database": "wmprodfeeds"},
+                                                            redshift_tmp_dir=args["TempDir"],
+                                                            transformation_ctx="datasink23")
+datasink24 = glueContext.write_dynamic_frame.from_jdbc_conf(frame=sites, catalog_connection="Redshift",
+                                                            connection_options={"dbtable": "mec_us_trp.sizmek_sites",
+                                                                                "database": "wmprodfeeds"},
+                                                            redshift_tmp_dir=args["TempDir"],
+                                                            transformation_ctx="datasink24")
+datasink25 = glueContext.write_dynamic_frame.from_jdbc_conf(frame=states, catalog_connection="Redshift",
+                                                            connection_options={"dbtable": "mec_us_trp.sizmek_state",
+                                                                                "database": "wmprodfeeds"},
+                                                            redshift_tmp_dir=args["TempDir"],
+                                                            transformation_ctx="datasink25")
+datasink26 = glueContext.write_dynamic_frame.from_jdbc_conf(frame=target_audiences, catalog_connection="Redshift",
+                                                            connection_options={
+                                                                "dbtable": "mec_us_trp.sizmek_target_audience",
+                                                                "database": "wmprodfeeds"},
+                                                            redshift_tmp_dir=args["TempDir"],
+                                                            transformation_ctx="datasink26")
+datasink27 = glueContext.write_dynamic_frame.from_jdbc_conf(frame=video_names, catalog_connection="Redshift",
+                                                            connection_options={
+                                                                "dbtable": "mec_us_trp.sizmek_video_names",
+                                                                "database": "wmprodfeeds"},
+                                                            redshift_tmp_dir=args["TempDir"],
+                                                            transformation_ctx="datasink27")
+datasink28 = glueContext.write_dynamic_frame.from_jdbc_conf(frame=advertisers, catalog_connection="Redshift",
+                                                            connection_options={
+                                                                "dbtable": "mec_us_trp.sizmek_advertisers",
+                                                                "database": "wmprodfeeds"},
+                                                            redshift_tmp_dir=args["TempDir"],
+                                                            transformation_ctx="datasink28")
+datasink29 = glueContext.write_dynamic_frame.from_jdbc_conf(frame=placements, catalog_connection="Redshift",
+                                                            connection_options={
+                                                                "dbtable": "mec_us_trp.sizmek_placements",
+                                                                "database": "wmprodfeeds"},
+                                                            redshift_tmp_dir=args["TempDir"],
+                                                            transformation_ctx="datasink29")
+datasink30 = glueContext.write_dynamic_frame.from_jdbc_conf(frame=products, catalog_connection="Redshift",
+                                                            connection_options={"dbtable": "mec_us_trp.sizmek_product",
+                                                                                "database": "wmprodfeeds"},
+                                                            redshift_tmp_dir=args["TempDir"],
+                                                            transformation_ctx="datasink30")
+datasink31 = glueContext.write_dynamic_frame.from_jdbc_conf(frame=master_campaigns, catalog_connection="Redshift",
+                                                            connection_options={
+                                                                "dbtable": "mec_us_trp.sizmek_master_campaigns",
+                                                                "database": "wmprodfeeds"},
+                                                            redshift_tmp_dir=args["TempDir"],
+                                                            transformation_ctx="datasink31")
+datasink32 = glueContext.write_dynamic_frame.from_jdbc_conf(frame=period_names, catalog_connection="Redshift",
+                                                            connection_options={
+                                                                "dbtable": "mec_us_trp.sizmek_period_names",
+                                                                "database": "wmprodfeeds"},
+                                                            redshift_tmp_dir=args["TempDir"],
+                                                            transformation_ctx="datasink32")
+
+job.commit()

@@ -1,0 +1,92 @@
+import sys
+from awsglue.transforms import *
+from awsglue.utils import getResolvedOptions
+from pyspark.context import SparkContext
+from pyspark.sql import SQLContext
+from awsglue.context import GlueContext
+from awsglue.job import Job
+from awsglue.dynamicframe import DynamicFrame
+from pyspark.sql.functions import col, when,lit
+import time
+
+args = getResolvedOptions(sys.argv, ['TempDir','JOB_NAME'])
+sc = SparkContext()
+glueContext = GlueContext(sc)
+sqlContext = SQLContext(sc)
+spark = glueContext.spark_session
+job = Job(glueContext)
+job.init(args['JOB_NAME'], args)
+
+def replaceby_null(x):
+    return when(col(x) != "\N", col(x)).otherwise(None)
+    
+df1 = sqlContext.read.format("com.databricks.spark.csv").option("header", "false").option("inferSchema", "true").option("delimiter", '').load("s3://dias.prod.us-east-1.dias-data/MEC_TRP_Sizmek_Custom_Outbound_20171106/Conversion/*")
+currrentTime = time.strftime("%Y-%m-%d %H:%M")
+df = df1.withColumn("AcquiredTime", lit(currrentTime))
+
+datasource0 = DynamicFrame.fromDF(df, glueContext, "datasource0")
+datasource1 = datasource0.resolveChoice(specs = [('_c6','cast:double'),('_c13','cast:int'),('_c14','cast:int'),('_c16','cast:int'),('_c17','cast:timestamp'),('_c18','cast:int'),('_c19','cast:int'),('_c20','cast:int'),
+('_c21','cast:int'),('_c22','cast:int'), ('_c81','cast:int'),('_c82','cast:int'),('_c84','cast:int'),('_c86','cast:int'),('_c87','cast:int'),
+('_c88','cast:int'),('_c90','cast:string'),('_c94','cast:timestamp'),('AcquiredTime','cast:timestamp')])
+
+## @type: ApplyMapping
+## @return: applymapping1
+## @inputs: [frame = datasource0]
+applymapping1 = ApplyMapping.apply(frame = datasource1, mappings = 
+[("_c0", "string", "UserID", "string"), ("_c1", "string", "ConversionID", "string"),  
+("_c2", "timestamp", "ConversionDate", "timestamp"),("_c3", "int", "ConversionTagID", "int"), 
+("_c4", "int", "AdvertiserID", "int"), 
+("_c5", "string", "AccountID", "string"), ("_c6", "double", "Revenue", "double"), ("_c7", "int", "Currency", "int"), 
+("_c8", "int", "Quantity", "int"), ("_c9", "string", "OrderID", "string"), ("_c10", "string", "Referrer", "string"), 
+("_c11", "string", "ProductID", "string"), ("_c12", "string", "ProductInfo", "string"), ("_c13", "int", "WinnerEntityID", "int"),
+("_c14", "int", "WinnerSEMID", "int"), ("_c15", "string", "WinnerSEUniqueID", "string"), ("_c16", "int", "EventTypeID", "int"),
+("_c17", "timestamp", "WinnerEventDate", "timestamp"), 
+("_c18", "int", "PlacementID", "int"), ("_c19", "int", "SiteID", "int"), ("_c20", "int", "CampaignID", "int"), 
+("_c21", "int", "AdGroupID", "int"), ("_c22", "int", "BrandID", "int"),
+ ("_c23", "int", "CountryID", "int"),("_c24", "int", "StateID", "int"), 
+ ("_c25", "int", "DMAID", "int"), ("_c26", "int", "CityID", "int"), ("_c27", "string", "ZipCode", "string"), 
+ ("_c28", "string", "AreaCode", "string"),("_c29", "int", "OSCode", "int"), ("_c30", "int", "BrowserCode", "int"),
+ ("_c31", "string", "String1", "string"),("_c32", "string", "String2", "string"), ("_c33", "string", "String3", "string"), 
+("_c34", "string", "String4", "string"),("_c35", "string", "String5", "string"), ("_c36", "string", "String6", "string"), 
+("_c37", "string", "String7", "string"),("_c38", "string", "String8", "string"), ("_c39", "string", "String9", "string"), 
+("_c40", "string", "String10", "string"), ("_c41", "string", "String11", "string"), ("_c42", "string", "String12", "string"), 
+("_c43", "string", "String13", "string"), ("_c44", "string", "String14", "string"), ("_c45", "string", "String15", "string"), 
+("_c46", "string", "String16", "string"), ("_c47", "string", "String17", "string"), ("_c48", "string", "String18", "string"), 
+("_c49", "string", "String19", "string"),("_c50", "string", "String20", "string"), ("_c51", "string", "String21", "string"), 
+("_c52", "string", "String22", "string"), ("_c53", "string", "String23", "string"), ("_c54", "string", "String24", "string"), 
+("_c55", "string", "String25", "string"),("_c56", "string", "String26", "string"), ("_c57", "string", "String27", "string"), 
+("_c58", "string", "String28", "string"),("_c59", "string", "String29", "string"), ("_c60", "string", "String30", "string"), 
+("_c61", "string", "String31", "string"),("_c62", "string", "String32", "string"), ("_c63", "string", "String33", "string"), 
+("_c64", "string", "String34", "string"),("_c65", "string", "String35", "string"), ("_c66", "string", "String36", "string"), 
+("_c67", "string", "String37", "string"),("_c68", "string", "String38", "string"), ("_c69", "string", "String39", "string"), 
+("_c70", "string", "String40", "string"),("_c71", "string", "String41", "string"), ("_c72", "string", "String42", "string"), 
+("_c73", "string", "String43", "string"),("_c74", "string", "String44", "string"), ("_c75", "string", "String45", "string"), 
+("_c76", "string", "String46", "string"),("_c77", "string", "String47", "string"), ("_c78", "string", "String48", "string"),
+("_c79", "string", "String49", "string"),("_c80", "string", "String50", "string"),("_c81", "int", "EBCampaignID", "int"),
+("_c82", "int", "SECampaignID", "int"), ("_c83", "string", "SEAccountID", "string"),("_c84", "int", "SEAdGroupID", "int"), 
+("_c85", "int", "DeviceTypeID", "int"), ("_c86", "int", "WinnerVersionID", "int"),("_c87", "int", "WinnerTargetAudienceID", "int"),
+("_c88", "int", "WinnerDeliveryGroupID", "int"),("_c89", "boolean", "IsConversion", "boolean"), ("_c90", "string", "MobileDevice", "string"),
+("_c91", "string", "WinnerPCP", "string"), ("_c92", "string", "WinnerEventID", "string"),
+("_c93", "timestamp", "ConversionDateDefaultTImeZone", "timestamp"),("_c94", "timestamp", "WinnerEventDateDefaultTImeZone", "timestamp"),
+("_c95", "long", "UserIDNumeric", "long"),("_c96", "int", "md_file_date", "int"),("_c97", "long", "md_user_id_numeric", "long"), 
+("AcquiredTime", "timestamp", "AcquiredTime", "timestamp")], transformation_ctx = "applymapping1")
+ 
+## @type: ResolveChoice
+## @args: [choice = "make_cols", transformation_ctx = "resolvechoice2"]
+## @return: resolvechoice2
+## @inputs: [frame = applymapping1]
+resolvechoice2 = ResolveChoice.apply(frame = applymapping1, choice = "make_cols", transformation_ctx = "resolvechoice2")
+## @type: DropNullFields
+## @args: [transformation_ctx = "dropnullfields3"]
+## @return: dropnullfields3
+## @inputs: [frame = resolvechoice2]
+dropnullfields3 = DropNullFields.apply(frame = resolvechoice2, transformation_ctx = "dropnullfields3")
+dropnullfields3.toDF().show()
+## @type: DataSink
+## @args: [catalog_connection = "RedshiftDestination", connection_options = {"dbtable": "mec_us_trp.sizmek_conversion_events", "database": "wmprodfeeds"}, redshift_tmp_dir = TempDir, transformation_ctx = "datasink4"]
+## @return: datasink4
+## @inputs: [frame = dropnullfields3]
+#print 'Schema before creating table'
+#dropnullfields3.printSchema()
+datasink4 = glueContext.write_dynamic_frame.from_jdbc_conf(frame = dropnullfields3, catalog_connection = "Redshift", connection_options = {"dbtable": "mec_us_trp.sizmek_conversion_events", "database": "wmprodfeeds"}, redshift_tmp_dir = args["TempDir"], transformation_ctx = "datasink4")
+job.commit()
